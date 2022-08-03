@@ -1,18 +1,16 @@
 import React from "react";
 
-const Todo = ({todo}) => {
+const Todo = ({ todo, deleteTodo }) => {
   console.log(todo);
-  const {title,description} = todo;
+  const { title, description, id, completed } = todo;
   return (
-    <div
-      tabindex="0"
-      class="collapse collapse-arrow border border-primary bg-base-100 rounded-box"
-    >
-      <div class="collapse-title text-xl font-medium">
-        {title}
-      </div>
-      <div class="collapse-content">
-        <p>{description}</p>
+    <div className=" border-2 rounded-md py-3 px-2 border-primary">
+      <div class="form-control">
+        <label class="label cursor-pointer">
+          <input type="checkbox" checked={completed} class="checkbox" />
+          <span class="label-text text-2xl">{title}</span>
+          <button onClick={() => deleteTodo(id)}>delete</button>
+        </label>
       </div>
     </div>
   );
