@@ -3,31 +3,36 @@ import { useEffect } from "react";
 import { useState } from "react";
 import Todo from "./Todo";
 import { toast } from "react-toastify";
+import { useQuery } from "@tanstack/react-query";
+import Loading from "../../../components/Loading";
 
 const ListTodos = () => {
-  const [todos, setTodos] = useState([]);
+  const {
+    data: todos,
+    isLoading,
+    refetch,
+  } = useQuery(["todos"], () =>
+    fetch("http://localhost:5001/todo-server-5f960/us-central1/app/todo").then(
+      (res) => res.json()
+    )
+  );
 
-  useEffect(() => {
-    (async () => {
-      const res = await fetch(
-        "http://localhost:5001/todo-server-5f960/us-central1/app/todo"
-      );
-      const data = await res.json();
-      setTodos(data.data);
-    })();
-  }, []);
+
+  console.log(todos);
 
   const deleteTodo = (id) => {
     console.log(id);
-    fetch(`http://localhost:5001/todo-server-5f960/us-central1/app/todo/${id}`, {
-      method: "DELETE",
-    })
+    fetch(
+      `http://localhost:5001/todo-server-5f960/us-central1/app/todo/${id}`,
+      {
+        method: "DELETE",
+      }
+    )
       .then((res) => res.json())
       .then((data) => {
-        console.log('d',data);
+        console.log("d", data);
         if (data.success) {
-          const remaing = todos.filter((todo) => todo.id !== id);
-          setTodos(remaing);
+          refetch();
           toast.success(data.msg);
         } else {
           toast.error(data.msg);
@@ -37,13 +42,25 @@ const ListTodos = () => {
   };
   console.log(todos);
   return (
-    <div>
-      <div className="space-y-5">
-        {todos?.map((todo) => 
-          <Todo key={todo.id} todo={todo} deleteTodo={deleteTodo} />
-        )}
-      </div>
-    </div>
+    <>
+      {isLoading ? (
+        <Loading />
+      ) : (
+        <div>
+          <div className="space-y-5">
+            {todos?.data?.map((todo) => (
+              <Todo
+                key={todo.id}
+                todo={todo}
+                refetch={refetch}
+                deleteTodo={deleteTodo}
+                isLoading={isLoading}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 

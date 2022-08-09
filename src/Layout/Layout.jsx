@@ -5,9 +5,16 @@ import Routers from "../Routers/Routers";
 import { BrowserRouter } from "react-router-dom";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import {
+  QueryClient,
+  QueryClientProvider,
+} from '@tanstack/react-query'
+
+const queryClient = new QueryClient()
 
 const Layout = () => {
   return (
+    <QueryClientProvider client={queryClient}>
     <BrowserRouter>
       <div>
         <header>
@@ -17,11 +24,9 @@ const Layout = () => {
         <main className="max-w-7xl mx-auto">
           <Routers />
         </main>
-        <footer>
-          <Footer />
-        </footer>
       </div>
     </BrowserRouter>
+    </QueryClientProvider>
   );
 };
 
